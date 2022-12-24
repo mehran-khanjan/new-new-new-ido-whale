@@ -1,0 +1,33 @@
+1- For authentication, we have 3 steps. Now, we are using Redux Thunk for them.
+But the dispatch function doesn't return anything and it can create an error.
+So, replace Redux Thunk with simple API call.
+
+because of this comment, I can't use Redux Thunk for this purpose:
+Correct me if I'm wrong, but actions are normally synchronous, so the store has updated,
+but in the case of react, that doesn't necessarily mean that
+all the components that are pulling values from redux have rerendered with those values.
+https://stackoverflow.com/questions/40946046/wait-for-a-redux-action-to-finish-dispatching
+
+2- please connect your wallet first
+add some listener for change network and change account events
+
+3- if the user has three wallets and connect them one by one,
+how do we should handle the content of the fileSystem, setItem and getItem
+
+4-
+4- اگر کاربر با نام کاربری و رمز خود ، نقش ادمین را درخواست دهد باید برگشت شود
+و هیچ خدماتی به آن ارائه نشود
+
+5-
+بحث اتصال کیف پول یعنی فراهم کردن provider ولی لاگین کردن یعنی دسترسی به بعضی از ویژگی های سایت
+باید این دو مورد یکی شود ، در این صورت برای دریافت اطلاعات کلی باید از infura و بک اند استفاده کنیم
+چون نمیتوانیم بدون اتصال کیف پول ، دیتایی از بلاک چین بخوانیم
+
+6-
+برای کامپوننت RouteGuard یک استراتژی بهتری تعریف شود ، فقط با چک کردن موجود بودن توکن ، کافی نیست
+
+7-
+use formik
+
+8-
+use select2 for input forms

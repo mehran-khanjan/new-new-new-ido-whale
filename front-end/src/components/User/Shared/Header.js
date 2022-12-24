@@ -37,7 +37,7 @@ const Header = () => {
                                 {/*end logo*/}
 
                                 {/*tagline*/}
-                                <span className="header__tagline">Play to earn <br/></span>
+                                <span className="header__tagline">IDO Whale<br/></span>
                                 {/*end tagline*/}
 
                                 {/*navigation*/}
@@ -46,7 +46,7 @@ const Header = () => {
                                         <NavLink to="/">Home</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to="/launchpads">Explore</NavLink>
+                                        <NavLink to="/launchpads/list">Explore</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/launchpads/create">Create</NavLink>

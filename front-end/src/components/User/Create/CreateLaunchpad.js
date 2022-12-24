@@ -1,9 +1,97 @@
-import React from 'react';
+import React, {useState} from 'react';
+import DateTimePicker from "react-datetime-picker";
+import useWeb3Store from "../../../store/web3Store";
+import {useDispatch, useSelector} from "react-redux";
+import {createLaunchpad} from "../../../store/LaunchpadThunk";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content';
+
+const mySweetAlert = withReactContent(Swal);
 
 const CreateLaunchpad = () => {
-    return(
+    const [tokenContractAddress, setTokenContractAddress] = useState();
+    const provider = useWeb3Store(state => state.web3);
+    const publicAddress = useWeb3Store(state => state.publicAddress);
+    const networkId = useWeb3Store(state => state.networkId);
+    const dispatch = useDispatch();
+    const isTokenContractValid = useSelector(state => state.createLaunchpad.isValid);
+    const responseNetworkId = useSelector(state => state.createLaunchpad.networkId);
+    const responseContractAddress = useSelector(state => state.createLaunchpad.contractAddress);
+
+
+    const [presaleRate, setPresaleRate] = useState(null);
+    const [softCap, setSoftCap] = useState(null);
+    const [hardCap, setHardCap] = useState(null);
+    const [minBuy, setMinBuy] = useState(null);
+    const [maxBuy, setMaxBuy] = useState(null);
+    const [refundType, setRefundType] = useState(null);
+    const [router, setRouter] = useState(null);
+    const [dexLiquidity, setDexLiquidity] = useState(null);
+    const [dexListingRate, setDexListingRate] = useState(null);
+    const [start, setStart] = useState(new Date());
+    const [stop, setStop] = useState(new Date());
+    const [liquidityLockup, setLiquidityLockup] = useState(null);
+    const isUpdated = useSelector(state => state.updateLaunchpadDetails.isUpdated);
+
+    const [logoURL, setLogoURL] = useState(null);
+    const [websiteURL, setWebsiteURL] = useState(null);
+    const [facebook, setFacebook] = useState(null);
+    const [twitter, setTwitter] = useState(null);
+    const [instagram, setInstagram] = useState(null);
+    const [discord, setDiscord] = useState(null);
+    const [reddit, setReddit] = useState(null);
+    const [github, setGithub] = useState(null);
+    const [telegramGroup, setTelegramGroup] = useState(null);
+    const [telegramChannel, setTelegramChannel] = useState(null);
+    const [description, setDescription] = useState(null);
+    const isMoreUpdated = useSelector(state => state.updateLaunchpadDetails.isMoreUpdated);
+
+    const onFormSubmit = async (e) => {
+        e.preventDefault();
+
+        // setLoading(true);
+
+        if (!isTokenContractValid) {
+            console.log('the token contract address is: ', tokenContractAddress);
+            dispatch(createLaunchpad(tokenContractAddress, localStorage.getItem('networkId')));
+        } else {
+            // /launchpads/create/:networkId/:tokenContractAddress/add-details
+            // redirectFunc(responseNetworkId, responseContractAddress);
+            console.log('done');
+        }
+
+        // setLoading(false);
+
+    }
+
+    const handleTestSweetAlert = () => {
+        mySweetAlert.fire({
+            icon: 'info',
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            background: '#1d263b',
+            color: 'white',
+            showCancelButton: true,
+            allowOutsideClick: false,
+            confirmButtonColor: '#33b249',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+            // didOpen: () => {
+            //     // `MySwal` is a subclass of `Swal` with all the same instance & static methods
+            //     mySweetAlert.showLoading()
+            // },
+        })
+        // .then(() => {
+        //     return mySweetAlert.fire(<p>Shorthand works too</p>)
+        // })
+    }
+
+    return (
         <React.Fragment>
             <section className="section section--first">
+                <button onClick={handleTestSweetAlert} style={{color:"white"}}>Click</button>
+
                 {/*section head*/}
                 <div className="section__article-head">
                     <div className="container">
@@ -12,7 +100,7 @@ const CreateLaunchpad = () => {
                             <div className="col-12">
                                 <ul className="breadcrumb">
                                     <li className="breadcrumb__item"><a href="index.html">Home</a></li>
-                                    <li className="breadcrumb__item breadcrumb__item--active">Add a game</li>
+                                    <li className="breadcrumb__item breadcrumb__item--active">Add a launchpad</li>
                                 </ul>
                             </div>
                             {/*end breadcrumb*/}
@@ -20,7 +108,7 @@ const CreateLaunchpad = () => {
                             {/*section title*/}
                             <div className="col-12">
                                 <div className="section__title section__title--left section__title--page">
-                                    <h1>Add a new Blockchain Game</h1>
+                                    <h1>Add a new launchpad</h1>
                                 </div>
                             </div>
                             {/*end section title*/}
@@ -39,204 +127,204 @@ const CreateLaunchpad = () => {
                         <div className="col-12">
                             <form className="form form--big" action="#">
                                 <div className="row">
-                                    <div className="col-12 col-md-6">
-                                        <div className="form__group">
-                                            <label htmlFor="name" className="form__label">Name</label>
-                                            <input id="name" type="text" name="name" className="form__input"/>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-6">
-                                        <div className="form__group">
-                                            <label htmlFor="teaser" className="form__label">Teaser</label>
-                                            <input id="teaser" type="text" name="teaser" className="form__input"/>
-                                        </div>
-                                    </div>
+
                                     <div className="col-12">
                                         <div className="form__group">
-                                            <label htmlFor="description" className="form__label">Description</label>
-                                            <textarea id="description" name="description"
-                                                      className="form__textarea"></textarea>
+                                            <label htmlFor="tokenContractAddress" className="form__label">
+                                                Token Contract Address
+                                            </label>
+                                            <input id="tokenContractAddress" type="text" name="tokenContractAddress"
+                                                   className="form__input"
+                                                   onChange={e => setTokenContractAddress(e.target.value)}/>
+                                            {/*onBlur={}/>*/}
                                         </div>
                                     </div>
-                                    <div className="col-12 col-lg-4">
+
+                                    <div className="col-12">
                                         <div className="form__group">
-                                            <label htmlFor="form__gallery-upload" className="form__label">Main
-                                                image</label>
+                                            <label htmlFor="presaleRate" className="form__label">
+                                                Presale Rate
+                                            </label>
+                                            <input id="presaleRate" type="text" name="presaleRate"
+                                                   className="form__input"
+                                                   onChange={e => setPresaleRate(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="softCap" className="form__label">Soft Cap</label>
+                                            <input id="softCap" type="text" name="softCap" className="form__input"
+                                                   onChange={e => setSoftCap(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="hardCap" className="form__label">Hard Cap</label>
+                                            <input id="hardCap" type="text" name="hardCap" className="form__input"
+                                                   onChange={e => setHardCap(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="minBuy" className="form__label">Minimum Buy</label>
+                                            <input id="minBuy" type="text" name="minBuy" className="form__input"
+                                                   onChange={e => setMinBuy(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="maxBuy" className="form__label">Maximum Buy</label>
+                                            <input id="maxBuy" type="text" name="maxBuy" className="form__input"
+                                                   onChange={e => setMaxBuy(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-lg-6">
+                                        <div className="form__group">
+                                            <label htmlFor="refundType" className="form__label">Refund type</label>
+                                            <select id="refundType" className="form__select" name="pte">
+                                                <option className="form__select__option" value="0">1</option>
+                                                <option className="form__select__option" value="1">2</option>
+                                                <option className="form__select__option" value="2">3</option>
+                                                <option className="form__select__option" value="3">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-lg-6">
+                                        <div className="form__group">
+                                            <label htmlFor="router" className="form__label">Router</label>
+                                            <select id="router" className="form__select" name="pte">
+                                                <option className="form__select__option" value="0">1</option>
+                                                <option className="form__select__option" value="1">2</option>
+                                                <option className="form__select__option" value="2">3</option>
+                                                <option className="form__select__option" value="3">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="swapLiquidity" className="form__label">
+                                                Pancake Swap Liquidity
+                                            </label>
+                                            <input id="swapLiquidity" type="text" name="swapLiquidity"
+                                                   className="form__input"
+                                                   onChange={e => setDexLiquidity(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <div className="form__group">
+                                            <label htmlFor="swapListingRate" className="form__label">
+                                                Pancake Swap Listing Rate
+                                            </label>
+                                            <input id="swapListingRate" type="text" name="swapListingRate"
+                                                   className="form__input"
+                                                   onChange={e => setDexListingRate(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6">
+                                        <div className="form-group col-md-6">
+                                            <label>Start Time</label>
+                                            <DateTimePicker onChange={setStart} value={start}
+                                                            className="mb-4" style={{marginTop: '-20px'}}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <div className="form-group col-md-6">
+                                            <label>End Time</label>
+                                            <DateTimePicker onChange={setStop} value={stop}
+                                                            className="mb-4" style={{marginTop: '-20px'}}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12">
+                                        <div className="form__group">
+                                            <label htmlFor="liquidityLockup" className="form__label">
+                                                Liquidity Lockup
+                                            </label>
+                                            <input id="liquidityLockup" type="text" name="liquidityLockup"
+                                                   className="form__input"
+                                                   onChange={e => setLiquidityLockup(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12">
+                                        <div className="form__group">
+                                            <label htmlFor="form__gallery-upload" className="form__label">
+                                                Launchpad Logo
+                                            </label>
                                             <div className="form__gallery">
-                                                <label id="gallery1" htmlFor="form__gallery-upload">Upload cover</label>
+                                                <label id="gallery1" htmlFor="form__gallery-upload">Upload logo</label>
                                                 <input data-name="#gallery1" id="form__gallery-upload" name="gallery"
                                                        className="form__gallery-upload" type="file"
                                                        accept=".png, .jpg, .jpeg" multiple/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-12 col-lg-4">
-                                        <div className="form__group">
-                                            <label htmlFor="trailer" className="form__label">Game video (Youtube
-                                                link)</label>
-                                            <input id="trailer" type="text" name="trailer"
-                                                   className="form__input form__input--link"
-                                                   placeholder="https://www.youtube.com/watch?v=xxxxxx"/>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-lg-4">
-                                        <div className="form__group">
-                                            <label htmlFor="status" className="form__label">Public status</label>
-                                            <select id="status" className="form__select" name="status">
-                                                <option value="0">Alpha</option>
-                                                <option value="1">Beta</option>
-                                                <option value="2">Cancelled</option>
-                                                <option value="3">Development</option>
-                                                <option value="4">Live</option>
-                                                <option value="5">Presale</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-12">
-                                        <span className="form__line"></span>
-                                    </div>
-
-                                    <div className="col-12 col-lg-6">
-                                        <div className="form__group">
-                                            <label htmlFor="blockchain" className="form__label">Blockchain</label>
-                                            <select id="blockchain" className="form__select" name="blockchain"
-                                                    multiple="multiple">
-                                                <option value="0">Avalanche</option>
-                                                <option value="1">Binance Smart Chain</option>
-                                                <option value="2">Bitcoin</option>
-                                                <option value="3">Cardano</option>
-                                                <option value="4">Ethereum</option>
-                                                <option value="5">Fantom</option>
-                                                <option value="6">Flow</option>
-                                                <option value="7">Harmony</option>
-                                                <option value="8">Hive</option>
-                                                <option value="9">Litecoin</option>
-                                                <option value="10">Near</option>
-                                                <option value="11">NEO</option>
-                                                <option value="12">Polkadot</option>
-                                                <option value="13">Polygon</option>
-                                                <option value="14">Solana</option>
-                                                <option value="15">Waves</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-lg-6">
-                                        <div className="form__group">
-                                            <label htmlFor="devices" className="form__label">Devices</label>
-                                            <select id="devices" className="form__select" name="devices"
-                                                    multiple="multiple">
-                                                <option value="0">All devices</option>
-                                                <option value="1">Android</option>
-                                                <option value="2">IOS</option>
-                                                <option value="3">Linux</option>
-                                                <option value="4">MAC</option>
-                                                <option value="5">Playstation</option>
-                                                <option value="6">Web</option>
-                                                <option value="7">Windows</option>
-                                                <option value="8">XBOX</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-lg-4">
-                                        <div className="form__group">
-                                            <label htmlFor="ftp" className="form__label">Free to play</label>
-                                            <select id="ftp" className="form__select" name="ftp">
-                                                <option value="0">Yes</option>
-                                                <option value="1">NFT Required</option>
-                                                <option value="2">Crypto Required</option>
-                                                <option value="3">Game Required</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-lg-4">
-                                        <div className="form__group">
-                                            <label htmlFor="pte" className="form__label">Play to earn</label>
-                                            <select id="pte" className="form__select" name="pte">
-                                                <option className="form__select__option" value="0">No</option>
-                                                <option className="form__select__option" value="1">NFT</option>
-                                                <option className="form__select__option" value="2">Crypto</option>
-                                                <option className="form__select__option" value="3">NFT & Crypto</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-lg-4">
-                                        <div className="form__group">
-                                            <label htmlFor="genres" className="form__label">Game genres</label>
-                                            <select id="genres" className="form__select" name="genres"
-                                                    multiple="multiple">
-                                                <option value="0">Action</option>
-                                                <option value="1">Adventure</option>
-                                                <option value="2">Arcade</option>
-                                                <option value="3">Art</option>
-                                                <option value="4">Battle-Royale</option>
-                                                <option value="5">Board</option>
-                                                <option value="6">Building</option>
-                                                <option value="7">Card</option>
-                                                <option value="8">Casual</option>
-                                                <option value="9">Collectible</option>
-                                                <option value="10">Dungeon</option>
-                                                <option value="11">Educational</option>
-                                                <option value="12">Escape</option>
-                                                <option value="13">eSports</option>
-                                                <option value="14">Fantasy</option>
-                                                <option value="15">Fighting</option>
-                                                <option value="16">Horror</option>
-                                                <option value="17">Logic</option>
-                                                <option value="18">Mining</option>
-                                                <option value="19">MMO</option>
-                                                <option value="20">MMORPG</option>
-                                                <option value="21">MOBA</option>
-                                                <option value="22">Move-To-Earn</option>
-                                                <option value="23">Open-World</option>
-                                                <option value="24">Platformer</option>
-                                                <option value="25">PVP</option>
-                                                <option value="26">Racing</option>
-                                                <option value="27">RPG</option>
-                                                <option value="28">Sci-Fi</option>
-                                                <option value="29">Shooter</option>
-                                                <option value="30">Simulation</option>
-                                                <option value="31">Sports</option>
-                                                <option value="32">Strategy</option>
-                                                <option value="33">Survival</option>
-                                                <option value="34">Tactical</option>
-                                                <option value="35">Tower-Defense</option>
-                                                <option value="36">Virtual-Reality</option>
-                                                <option value="37">Virtual-World</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-12">
-                                        <span className="form__line"></span>
-                                    </div>
 
                                     <div className="col-12 col-md-6 col-xl-4">
                                         <div className="form__group">
                                             <label htmlFor="website" className="form__label">Website</label>
                                             <input id="website" type="text" name="website"
-                                                   className="form__input form__input--link"/>
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setWebsiteURL(e.target.value)}/>
                                         </div>
                                     </div>
                                     <div className="col-12 col-md-6 col-xl-4">
                                         <div className="form__group">
                                             <label htmlFor="twitter" className="form__label">Twitter</label>
                                             <input id="twitter" type="text" name="twitter"
-                                                   className="form__input form__input--link"/>
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setTwitter(e.target.value)}/>
                                         </div>
                                     </div>
+
+                                    <div className="col-12 col-md-6 col-xl-4">
+                                        <div className="form__group">
+                                            <label htmlFor="facebook" className="form__label">Facebook</label>
+                                            <input id="facebook" type="text" name="facebook"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setFacebook(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6 col-xl-4">
+                                        <div className="form__group">
+                                            <label htmlFor="instagram" className="form__label">Instagram</label>
+                                            <input id="instagram" type="text" name="instagram"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setInstagram(e.target.value)}/>
+                                        </div>
+                                    </div>
+
                                     <div className="col-12 col-md-6 col-xl-4">
                                         <div className="form__group">
                                             <label htmlFor="discord" className="form__label">Discord</label>
                                             <input id="discord" type="text" name="discord"
-                                                   className="form__input form__input--link"/>
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setDiscord(e.target.value)}/>
                                         </div>
                                     </div>
                                     <div className="col-12 col-md-6 col-xl-4">
                                         <div className="form__group">
-                                            <label htmlFor="telegram" className="form__label">Telegram</label>
-                                            <input id="telegram" type="text" name="telegram"
-                                                   className="form__input form__input--link"/>
+                                            <label htmlFor="reddit" className="form__label">Reddit</label>
+                                            <input id="reddit" type="text" name="reddit"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setReddit(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6 col-xl-4">
+                                        <div className="form__group">
+                                            <label htmlFor="github" className="form__label">Github</label>
+                                            <input id="github" type="text" name="github"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setGithub(e.target.value)}/>
                                         </div>
                                     </div>
                                     <div className="col-12 col-md-6 col-xl-4">
@@ -246,41 +334,42 @@ const CreateLaunchpad = () => {
                                                    className="form__input form__input--link"/>
                                         </div>
                                     </div>
+
                                     <div className="col-12 col-md-6 col-xl-4">
                                         <div className="form__group">
-                                            <label htmlFor="facebook" className="form__label">Facebook</label>
-                                            <input id="facebook" type="text" name="facebook"
-                                                   className="form__input form__input--link"/>
+                                            <label htmlFor="telegramChannel" className="form__label">
+                                                Telegram Channel
+                                            </label>
+                                            <input id="telegramChannel" type="text" name="telegramChannel"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setTelegramChannel(e.target.value)}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-md-6 col-xl-4">
+                                        <div className="form__group">
+                                            <label htmlFor="telegramGroup" className="form__label">
+                                                Telegram Group
+                                            </label>
+                                            <input id="telegramGroup" type="text" name="telegramGroup"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setTelegramGroup(e.target.value)}/>
                                         </div>
                                     </div>
 
                                     <div className="col-12">
-                                        <span className="form__line"></span>
-                                    </div>
-
-                                    <div className="col-12 col-md-6">
                                         <div className="form__group">
-                                            <label htmlFor="yourname" className="form__label">Your name</label>
-                                            <input id="yourname" type="text" name="yourname" className="form__input"/>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-6">
-                                        <div className="form__group">
-                                            <label htmlFor="email" className="form__label">Email</label>
-                                            <input id="email" type="text" name="email" className="form__input"/>
-                                        </div>
-                                    </div>
-                                    <div className="col-12">
-                                        <div className="form__group">
-                                            <label htmlFor="contacts" className="form__label">Your other
-                                                contacts</label>
-                                            <textarea id="contacts" name="contacts"
-                                                      className="form__textarea"></textarea>
+                                            <label htmlFor="description" className="form__label">Description</label>
+                                            <textarea id="description" name="description"
+                                                      className="form__textarea" onChange={e => setDescription(e.target.value)}/>/>
                                         </div>
                                     </div>
 
                                     <div className="col-12">
-                                        <button type="button" className="form__btn form__btn--small">Submit</button>
+                                        <button type="button" className="form__btn form__btn--small"
+                                        style={{width: '100%'}}>
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
                             </form>
