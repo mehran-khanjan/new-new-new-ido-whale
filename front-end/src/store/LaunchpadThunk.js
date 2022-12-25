@@ -43,7 +43,13 @@ export const checkTokenValidity = ({tokenContractAddress}) => {
             } else {
                 console.log('The token contract address is valid');
                 const sweetAlertOptions = successSweetAlertOptions({text: 'The token contract address is invalid'});
-                mySweetAlert.fire(sweetAlertOptions).then(() => {dispatch(createLaunchpadActions.setTokenValidity(result.data.result));});
+                mySweetAlert.fire(sweetAlertOptions)
+                    .then(() => {
+                        dispatch(createLaunchpadActions.setTokenValidity({
+                            totalSupply: result.data.result,
+                            contractAddress: tokenContractAddress
+                        }));
+                    });
             }
 
         } catch (e) {

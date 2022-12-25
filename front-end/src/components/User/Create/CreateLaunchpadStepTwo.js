@@ -57,6 +57,12 @@ const CreateLaunchpadStepOne = (props) => {
         props.onPrevStep();
     }
 
+    console.log('token ccc',props.tokenContractAddress);
+
+    if (!props.tokenContractAddress) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <React.Fragment>
             <section className="section section--first">

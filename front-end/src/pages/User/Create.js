@@ -9,6 +9,7 @@ import {useSelector} from "react-redux";
 const Create = () => {
     const [step, setStep] = useState(1);
     const isTokenValid = useSelector(state => state.createLaunchpad.isTokenValid);
+    const contractAddress = useSelector(state => state.createLaunchpad.contractAddress);
 
     useEffect(() => {
         if (isTokenValid) {
@@ -28,7 +29,7 @@ const Create = () => {
         case 1:
             return <CreateLaunchpadStepOne onNextStep={onNextStepHandle}/>
         case 2:
-            return <CreateLaunchpadStepTwo onNextStep={onNextStepHandle} onPrevStep={onPrevStepHandle}/>
+            return <CreateLaunchpadStepTwo onNextStep={onNextStepHandle} onPrevStep={onPrevStepHandle} tokenContractAddress={contractAddress}/>
         case 3:
             return <CreateLaunchpadStepThree onNextStep={onNextStepHandle} onPrevStep={onPrevStepHandle}/>
         case 4:

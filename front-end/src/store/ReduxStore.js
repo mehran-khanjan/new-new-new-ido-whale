@@ -64,7 +64,8 @@ const createLaunchpadSlice = createSlice({
         },
         setTokenValidity(state, action) {
             state.isTokenValid = true;
-            state.totalSupply = action.payload;
+            state.totalSupply = action.payload.totalSupply;
+            state.contractAddress = action.payload.contractAddress;
         }
     }
 });
