@@ -31,3 +31,6 @@ use formik
 
 8-
 use select2 for input forms
+
+9-
+در نسخه موبایل ، input های تاریخ مشکل دارند

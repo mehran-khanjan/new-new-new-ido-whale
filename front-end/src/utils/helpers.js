@@ -1,4 +1,5 @@
 import {Interface} from "ethers/lib/utils";
+import loadingImage from "../assets/img/loading.svg";
 
 
 export function formatAddress(value, length = 4) {
@@ -19,7 +20,7 @@ export const parseLogs = (receipt, eventName, abi) => {
         // because of this post, I refine the logs array
         // and just check logs have data '0x'
         // https://github.com/ethers-io/ethers.js/discussions/3220
-        if(log.data === '0x') {
+        if (log.data === '0x') {
             let issuedEvent = iFace.parseLog({topics, data});
             console.log('final event: ', issuedEvent);
 
@@ -42,4 +43,37 @@ export const parseLogs = (receipt, eventName, abi) => {
 export function trimTextPrice(txt) {
     const begin = txt.toString().substring(0, 10);
     return `${begin}`;
+}
+
+export const loadingSweetAlertOptions = {
+    iconHtml: `<img src="${loadingImage}" alt="loading spinner"/>`,
+    iconColor: 'white',
+    title: 'Loading...',
+    text: 'Please wait...',
+    background: '#1d263b',
+    color: 'white',
+    showConfirmButton: false,
+    allowOutsideClick: false
+}
+
+export const errorSweetAlertOptions = ({text}) => {
+    return {
+        icon: 'error',
+        title: 'Error',
+        text: text,
+        color: 'white',
+        background: '#1d263b',
+        allowOutsideClick: false
+    }
+}
+
+export const successSweetAlertOptions = ({text}) => {
+    return {
+        icon: 'success',
+        title: 'Success',
+        text: text,
+        color: 'white',
+        background: '#1d263b',
+        allowOutsideClick: false
+    }
 }

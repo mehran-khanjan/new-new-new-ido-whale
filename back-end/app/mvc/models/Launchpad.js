@@ -94,6 +94,9 @@ const launchpadSchema = new Schema({
     telegramChannel: {
         type: String
     },
+    youtube: {
+        type: String
+    },
     description: {
         type: String
     }

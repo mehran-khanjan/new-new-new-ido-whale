@@ -50,7 +50,7 @@ const notificationSlice = createSlice({
 
 const createLaunchpadSlice = createSlice({
     name: 'createLaunchpad',
-    initialState: {isValid: false, networkId: null, contractAddress: null},
+    initialState: {isTokenValid: false, totalSupply: null, isValid: false, networkId: null, contractAddress: null},
     reducers: {
         setValid(state, action) {
             state.isValid = true;
@@ -61,6 +61,10 @@ const createLaunchpadSlice = createSlice({
             state.isValid = false;
             state.networkId = null;
             state.contractAddress = null;
+        },
+        setTokenValidity(state, action) {
+            state.isTokenValid = true;
+            state.totalSupply = action.payload;
         }
     }
 });

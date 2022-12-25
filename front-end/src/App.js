@@ -16,7 +16,7 @@ import Auth from "./components/User/Shared/Auth";
 function App() {
     return (
         <BrowserRouter>
-            <Auth/>
+            {/*<Auth/>*/}
 
             <Routes>
 

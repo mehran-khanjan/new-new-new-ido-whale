@@ -138,6 +138,7 @@ module.exports.update = async (req, res, next) => {
         github,
         telegramGroup,
         telegramChannel,
+        youtube,
         description,
         contractAddress
     } = req.body;
@@ -183,6 +184,7 @@ module.exports.update = async (req, res, next) => {
                 github,
                 telegramGroup,
                 telegramChannel,
+                youtube,
                 description,
                 isDeployed,
                 contractAddress

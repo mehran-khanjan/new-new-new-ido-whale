@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import DateTimePicker from "react-datetime-picker";
 import useWeb3Store from "../../../store/web3Store";
 import {useDispatch, useSelector} from "react-redux";
-import {createLaunchpad} from "../../../store/LaunchpadThunk";
+import {createLaunchpad, updateLaunchpad} from "../../../store/LaunchpadThunk";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content';
+import {loadingSweetAlertOptions} from "../../../utils/helpers";
+import SectionTitle from "./SectionTitle";
 
 const mySweetAlert = withReactContent(Swal);
 
-const CreateLaunchpad = () => {
+const CreateLaunchpadStepOne = () => {
     const [tokenContractAddress, setTokenContractAddress] = useState();
     const provider = useWeb3Store(state => state.web3);
     const publicAddress = useWeb3Store(state => state.publicAddress);
@@ -17,7 +19,6 @@ const CreateLaunchpad = () => {
     const isTokenContractValid = useSelector(state => state.createLaunchpad.isValid);
     const responseNetworkId = useSelector(state => state.createLaunchpad.networkId);
     const responseContractAddress = useSelector(state => state.createLaunchpad.contractAddress);
-
 
     const [presaleRate, setPresaleRate] = useState(null);
     const [softCap, setSoftCap] = useState(null);
@@ -43,54 +44,50 @@ const CreateLaunchpad = () => {
     const [github, setGithub] = useState(null);
     const [telegramGroup, setTelegramGroup] = useState(null);
     const [telegramChannel, setTelegramChannel] = useState(null);
+    const [youtube, setYoutube] = useState(null);
     const [description, setDescription] = useState(null);
     const isMoreUpdated = useSelector(state => state.updateLaunchpadDetails.isMoreUpdated);
 
-    const onFormSubmit = async (e) => {
+    const handleFormSubmission = async (e) => {
         e.preventDefault();
 
-        // setLoading(true);
+        mySweetAlert.fire(loadingSweetAlertOptions);
 
-        if (!isTokenContractValid) {
-            console.log('the token contract address is: ', tokenContractAddress);
-            dispatch(createLaunchpad(tokenContractAddress, localStorage.getItem('networkId')));
+        if (provider) {
+            // if (!isUpdated) {
+                await dispatch(updateLaunchpad({
+                    provider, networkId, tokenContractAddress,
+                    isDeployed: '0', presaleRate, softCap, hardCap, minBuy, maxBuy,
+                    // refundType, router, dexLiquidity, dexListingRate,
+                    startDate: Math.floor(start.getTime() / 1000),
+                    stopDate: Math.floor(stop.getTime() / 1000),
+                    // liquidityLockup,
+                    logoURL,
+                    websiteURL,
+                    facebook,
+                    twitter,
+                    instagram,
+                    discord,
+                    reddit,
+                    github,
+                    telegramGroup,
+                    telegramChannel,
+                    youtube,
+                    description
+                }));
+            // } else {
+                // return navigate(`/launchpads/create/${networkId}/${tokenContractAddress}/add-more-details`);
+            // }
         } else {
-            // /launchpads/create/:networkId/:tokenContractAddress/add-details
-            // redirectFunc(responseNetworkId, responseContractAddress);
-            console.log('done');
+            console.log('connect wallet first');
         }
 
-        // setLoading(false);
-
-    }
-
-    const handleTestSweetAlert = () => {
-        mySweetAlert.fire({
-            icon: 'info',
-            title: 'Are you sure?',
-            text: 'You won\'t be able to revert this!',
-            background: '#1d263b',
-            color: 'white',
-            showCancelButton: true,
-            allowOutsideClick: false,
-            confirmButtonColor: '#33b249',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-            // didOpen: () => {
-            //     // `MySwal` is a subclass of `Swal` with all the same instance & static methods
-            //     mySweetAlert.showLoading()
-            // },
-        })
-        // .then(() => {
-        //     return mySweetAlert.fire(<p>Shorthand works too</p>)
-        // })
+        mySweetAlert.close();
     }
 
     return (
         <React.Fragment>
             <section className="section section--first">
-                <button onClick={handleTestSweetAlert} style={{color:"white"}}>Click</button>
 
                 {/*section head*/}
                 <div className="section__article-head">
@@ -105,13 +102,7 @@ const CreateLaunchpad = () => {
                             </div>
                             {/*end breadcrumb*/}
 
-                            {/*section title*/}
-                            <div className="col-12">
-                                <div className="section__title section__title--left section__title--page">
-                                    <h1>Add a new launchpad</h1>
-                                </div>
-                            </div>
-                            {/*end section title*/}
+                            <SectionTitle step={5}/>
                         </div>
                     </div>
 
@@ -125,7 +116,7 @@ const CreateLaunchpad = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-12">
-                            <form className="form form--big" action="#">
+                            <form className="form form--big" onSubmit={handleFormSubmission}>
                                 <div className="row">
 
                                     <div className="col-12">
@@ -181,54 +172,54 @@ const CreateLaunchpad = () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-12 col-lg-6">
-                                        <div className="form__group">
-                                            <label htmlFor="refundType" className="form__label">Refund type</label>
-                                            <select id="refundType" className="form__select" name="pte">
-                                                <option className="form__select__option" value="0">1</option>
-                                                <option className="form__select__option" value="1">2</option>
-                                                <option className="form__select__option" value="2">3</option>
-                                                <option className="form__select__option" value="3">4</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    {/*<div className="col-12 col-lg-6">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="refundType" className="form__label">Refund type</label>*/}
+                                    {/*        <select id="refundType" className="form__select" name="pte">*/}
+                                    {/*            <option className="form__select__option" value="0">1</option>*/}
+                                    {/*            <option className="form__select__option" value="1">2</option>*/}
+                                    {/*            <option className="form__select__option" value="2">3</option>*/}
+                                    {/*            <option className="form__select__option" value="3">4</option>*/}
+                                    {/*        </select>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
 
-                                    <div className="col-12 col-lg-6">
-                                        <div className="form__group">
-                                            <label htmlFor="router" className="form__label">Router</label>
-                                            <select id="router" className="form__select" name="pte">
-                                                <option className="form__select__option" value="0">1</option>
-                                                <option className="form__select__option" value="1">2</option>
-                                                <option className="form__select__option" value="2">3</option>
-                                                <option className="form__select__option" value="3">4</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    {/*<div className="col-12 col-lg-6">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="router" className="form__label">Router</label>*/}
+                                    {/*        <select id="router" className="form__select" name="pte">*/}
+                                    {/*            <option className="form__select__option" value="0">1</option>*/}
+                                    {/*            <option className="form__select__option" value="1">2</option>*/}
+                                    {/*            <option className="form__select__option" value="2">3</option>*/}
+                                    {/*            <option className="form__select__option" value="3">4</option>*/}
+                                    {/*        </select>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
 
-                                    <div className="col-12 col-md-6">
-                                        <div className="form__group">
-                                            <label htmlFor="swapLiquidity" className="form__label">
-                                                Pancake Swap Liquidity
-                                            </label>
-                                            <input id="swapLiquidity" type="text" name="swapLiquidity"
-                                                   className="form__input"
-                                                   onChange={e => setDexLiquidity(e.target.value)}/>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-6">
-                                        <div className="form__group">
-                                            <label htmlFor="swapListingRate" className="form__label">
-                                                Pancake Swap Listing Rate
-                                            </label>
-                                            <input id="swapListingRate" type="text" name="swapListingRate"
-                                                   className="form__input"
-                                                   onChange={e => setDexListingRate(e.target.value)}/>
-                                        </div>
-                                    </div>
+                                    {/*<div className="col-12 col-md-6">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="swapLiquidity" className="form__label">*/}
+                                    {/*            Pancake Swap Liquidity*/}
+                                    {/*        </label>*/}
+                                    {/*        <input id="swapLiquidity" type="text" name="swapLiquidity"*/}
+                                    {/*               className="form__input"*/}
+                                    {/*               onChange={e => setDexLiquidity(e.target.value)}/>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
+                                    {/*<div className="col-12 col-md-6">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="swapListingRate" className="form__label">*/}
+                                    {/*            Pancake Swap Listing Rate*/}
+                                    {/*        </label>*/}
+                                    {/*        <input id="swapListingRate" type="text" name="swapListingRate"*/}
+                                    {/*               className="form__input"*/}
+                                    {/*               onChange={e => setDexListingRate(e.target.value)}/>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
 
                                     <div className="col-12 col-md-6">
                                         <div className="form-group col-md-6">
-                                            <label>Start Time</label>
+                                            <label className="form__label">Start Time</label>
                                             <DateTimePicker onChange={setStart} value={start}
                                                             className="mb-4" style={{marginTop: '-20px'}}
                                             />
@@ -236,35 +227,46 @@ const CreateLaunchpad = () => {
                                     </div>
                                     <div className="col-12 col-md-6">
                                         <div className="form-group col-md-6">
-                                            <label>End Time</label>
+                                            <label className="form__label">End Time</label>
                                             <DateTimePicker onChange={setStop} value={stop}
                                                             className="mb-4" style={{marginTop: '-20px'}}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="col-12">
-                                        <div className="form__group">
-                                            <label htmlFor="liquidityLockup" className="form__label">
-                                                Liquidity Lockup
-                                            </label>
-                                            <input id="liquidityLockup" type="text" name="liquidityLockup"
-                                                   className="form__input"
-                                                   onChange={e => setLiquidityLockup(e.target.value)}/>
-                                        </div>
-                                    </div>
+                                    {/*<div className="col-12">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="liquidityLockup" className="form__label">*/}
+                                    {/*            Liquidity Lockup*/}
+                                    {/*        </label>*/}
+                                    {/*        <input id="liquidityLockup" type="text" name="liquidityLockup"*/}
+                                    {/*               className="form__input"*/}
+                                    {/*               onChange={e => setLiquidityLockup(e.target.value)}/>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
+
+                                    {/*<div className="col-12">*/}
+                                    {/*    <div className="form__group">*/}
+                                    {/*        <label htmlFor="form__gallery-upload" className="form__label">*/}
+                                    {/*            Launchpad Logo*/}
+                                    {/*        </label>*/}
+                                    {/*        <div className="form__gallery">*/}
+                                    {/*            <label id="gallery1" htmlFor="form__gallery-upload">Upload logo</label>*/}
+                                    {/*            <input data-name="#gallery1" id="form__gallery-upload" name="gallery"*/}
+                                    {/*                   className="form__gallery-upload" type="file"*/}
+                                    {/*                   accept=".png, .jpg, .jpeg" multiple/>*/}
+                                    {/*        </div>*/}
+                                    {/*    </div>*/}
+                                    {/*</div>*/}
 
                                     <div className="col-12">
                                         <div className="form__group">
-                                            <label htmlFor="form__gallery-upload" className="form__label">
-                                                Launchpad Logo
+                                            <label htmlFor="imageURL" className="form__label">
+                                                Image URL
                                             </label>
-                                            <div className="form__gallery">
-                                                <label id="gallery1" htmlFor="form__gallery-upload">Upload logo</label>
-                                                <input data-name="#gallery1" id="form__gallery-upload" name="gallery"
-                                                       className="form__gallery-upload" type="file"
-                                                       accept=".png, .jpg, .jpeg" multiple/>
-                                            </div>
+                                            <input id="imageURL" type="text" name="imageURL"
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setLogoURL(e.target.value)}/>
                                         </div>
                                     </div>
 
@@ -331,7 +333,8 @@ const CreateLaunchpad = () => {
                                         <div className="form__group">
                                             <label htmlFor="youtube" className="form__label">Youtube</label>
                                             <input id="youtube" type="text" name="youtube"
-                                                   className="form__input form__input--link"/>
+                                                   className="form__input form__input--link"
+                                                   onChange={e => setYoutube(e.target.value)}/>
                                         </div>
                                     </div>
 
@@ -361,13 +364,14 @@ const CreateLaunchpad = () => {
                                         <div className="form__group">
                                             <label htmlFor="description" className="form__label">Description</label>
                                             <textarea id="description" name="description"
-                                                      className="form__textarea" onChange={e => setDescription(e.target.value)}/>/>
+                                                      className="form__textarea"
+                                                      onChange={e => setDescription(e.target.value)}/>/>
                                         </div>
                                     </div>
 
                                     <div className="col-12">
-                                        <button type="button" className="form__btn form__btn--small"
-                                        style={{width: '100%'}}>
+                                        <button type="submit" className="form__btn form__btn--small"
+                                                style={{width: '100%'}}>
                                             Submit
                                         </button>
                                     </div>
@@ -382,4 +386,4 @@ const CreateLaunchpad = () => {
     )
 }
 
-export default CreateLaunchpad;
+export default CreateLaunchpadStepOne;

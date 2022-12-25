@@ -11,6 +11,46 @@ import {getter, setter} from "../utils/blockchainSetter";
 import presaleFactoryContractABI from "../blockchain/PresaleFactoryNew.json";
 import presaleContractABI from '../blockchain/PresaleNew.json';
 import {ethers} from "ethers";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content';
+import {loadingSweetAlertOptions} from "../utils/helpers";
+import {errorSweetAlertOptions, successSweetAlertOptions} from "../utils/helpers";
+
+const mySweetAlert = withReactContent(Swal);
+
+export const checkTokenValidity = ({tokenContractAddress}) => {
+    mySweetAlert.fire(loadingSweetAlertOptions);
+
+    return async (dispatch) => {
+        try {
+            const axiosOptions = {
+                url: process.env.REACT_APP_BSC_SCAN_API_URL,
+                method: 'GET',
+                params: {
+                    module: 'stats',
+                    action: 'tokensupply',
+                    contractAddress: tokenContractAddress,
+                    apikey: process.env.REACT_APP_BSC_SCAN_API_KEY
+                }
+            }
+            const result = await axios(axiosOptions);
+            console.log('the BSC api result is: ', result.data);
+
+            if (result.data.result === '0') {
+                console.log('The token contract address is invalid');
+                const sweetAlertOptions = errorSweetAlertOptions({text: 'The token contract address is invalid'});
+                mySweetAlert.fire(sweetAlertOptions);
+            } else {
+                console.log('The token contract address is valid');
+                const sweetAlertOptions = successSweetAlertOptions({text: 'The token contract address is invalid'});
+                mySweetAlert.fire(sweetAlertOptions).then(() => {dispatch(createLaunchpadActions.setTokenValidity(result.data.result));});
+            }
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
 
 export const buyLaunchpad = ({provider, buyerAmount, contractAddress}) => {
     return async (dispatch) => {
@@ -54,7 +94,7 @@ export const buyLaunchpad = ({provider, buyerAmount, contractAddress}) => {
     }
 }
 
-export const createLaunchpad = (tokenContractAddress, networkId) => {
+export const createLaunchpad = ({tokenContractAddress, networkId}) => {
     return async (dispatch) => {
         try {
             if (!isUserLogin()) {
@@ -77,7 +117,7 @@ export const createLaunchpad = (tokenContractAddress, networkId) => {
             const result = await axios(axiosOptions);
             if (result.data.status === 'success') {
                 const serverResult = result.data.data;
-                console.log(result.data.data);
+                console.log('create launchpad result is: ', result.data.data);
                 dispatch(createLaunchpadActions.setValid({
                     networkId: serverResult.launchpad.networkId,
                     contractAddress: serverResult.launchpad.tokenContractAddress
@@ -174,10 +214,14 @@ export const updateLaunchpad = (
         github,
         telegramGroup,
         telegramChannel,
+        youtube,
         description
     }
 ) => {
     return async (dispatch) => {
+
+        // await createLaunchpad({tokenContractAddress, networkId});
+        await dispatch(createLaunchpad({tokenContractAddress, networkId}));
 
         try {
             if (!isUserLogin()) {
@@ -216,66 +260,68 @@ export const updateLaunchpad = (
                     github,
                     telegramGroup,
                     telegramChannel,
+                    youtube,
                     description
                 }
             }
             const result = await axios(axiosOptions);
-            console.log('create launchpad result is: ', result.data);
+            console.log('update launchpad result is: ', result.data);
 
-            if (presaleRate) {
-                dispatch(updateLaunchpadDetailedActions.setUpdate());
-                // call blockchain function
+            // if (presaleRate) {
+            dispatch(updateLaunchpadDetailedActions.setUpdate());
+            // call blockchain function
 
-                const {receipt, issuedEvents} = await setter(
-                    process.env.REACT_APP_CONTRACT_ADDRESS,
-                    presaleFactoryContractABI.abi,
-                    provider,
-                    'create',
-                    /*
-                    address _sale_token,
-                    uint256 _token_rate,
-                    uint256 _raise_min,
-                    uint256 _raise_max,
-                    uint256 _softCap,
-                    uint256 _hardCap,
-                    bool _whitelist,
-                    uint256 _presale_start,
-                    uint256 _presale_end
-                    */
-                    // preRate is tokenCount. We should pass with decimals or without decimals?
-                    [
-                        tokenContractAddress,
-                        +presaleRate,
-                        ethers.utils.parseEther(minBuy),
-                        ethers.utils.parseEther(maxBuy),
-                        ethers.utils.parseEther(softCap),
-                        ethers.utils.parseEther(hardCap),
-                        false, +startDate, +stopDate,
-                        {value: ethers.utils.parseEther('0.01')}],
-                    'CreateEvent',
-                    dispatch
-                );
-                console.log('new launchpad address is: ', issuedEvents.tokenAddress)
-                // new contract address: 0xd42a6DcD2BB740F9E46d980781B8EffC69Ec076d
-                const preSaleContractAddress = issuedEvents.tokenAddress;
+            const {receipt, issuedEvents} = await setter(
+                process.env.REACT_APP_CONTRACT_ADDRESS,
+                presaleFactoryContractABI.abi,
+                provider,
+                'create',
+                /*
+                address _sale_token,
+                uint256 _token_rate,
+                uint256 _raise_min,
+                uint256 _raise_max,
+                uint256 _softCap,
+                uint256 _hardCap,
+                bool _whitelist,
+                uint256 _presale_start,
+                uint256 _presale_end
+                */
+                // preRate is tokenCount. We should pass with decimals or without decimals?
+                [
+                    tokenContractAddress,
+                    +presaleRate,
+                    ethers.utils.parseEther(minBuy),
+                    ethers.utils.parseEther(maxBuy),
+                    ethers.utils.parseEther(softCap),
+                    ethers.utils.parseEther(hardCap),
+                    false, +startDate, +stopDate,
+                    {value: ethers.utils.parseEther('0.01')}],
+                'CreateEvent',
+                dispatch
+            );
+            console.log('new launchpad address is: ', issuedEvents.tokenAddress)
+            // new contract address: 0xd42a6DcD2BB740F9E46d980781B8EffC69Ec076d
+            const preSaleContractAddress = issuedEvents.tokenAddress;
 
-                // update contract's data
-                const axiosOptions = {
-                    url: `${process.env.REACT_APP_API_URL}/launchpads/${networkId}/${tokenContractAddress}`,
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${getJWT()}`
-                    },
-                    data: {
-                        contractAddress: preSaleContractAddress
-                    }
+            // update contract's data
+            const axiosOptions2 = {
+                url: `${process.env.REACT_APP_API_URL}/launchpads/${networkId}/${tokenContractAddress}`,
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${getJWT()}`
+                },
+                data: {
+                    contractAddress: preSaleContractAddress,
+                    isDeployed: true
                 }
-                const result = await axios(axiosOptions);
-                console.log('update launchpad contract address result is: ', result.data);
-
-            } else {
-                dispatch(updateLaunchpadDetailedActions.setMoreUpdate());
             }
+            const result2 = await axios(axiosOptions2);
+            console.log('update2 launchpad contract address result is: ', result2.data);
+
+            // } else {
+            //     dispatch(updateLaunchpadDetailedActions.setMoreUpdate());
+            // }
         } catch (e) {
             console.log(e);
         }

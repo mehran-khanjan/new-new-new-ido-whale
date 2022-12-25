@@ -55,13 +55,17 @@ const Header = () => {
                                 {/*end navigation*/}
 
                                 <Wallet/>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </header>
+
             <Outlet/>
+
             <Footer/>
+
         </React.Fragment>
     )
 }
