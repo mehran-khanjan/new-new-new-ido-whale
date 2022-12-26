@@ -1,7 +1,8 @@
 import React from 'react';
 import LaunchpadItem from "./LaunchpadItem";
+const {v4: uuidv4} = require('uuid');
 
-const Launchpads = () => {
+const Launchpads = (props) => {
     return (
         <React.Fragment>
             <section className="section section--first">
@@ -99,7 +100,17 @@ const Launchpads = () => {
                 {/*games*/}
                 <div className="container">
                     <div className="row row--grid">
-                        <LaunchpadItem/>
+
+                        {props.launchpadsArray.length === 0
+                            && <div>No launchpad exist</div>
+                        }
+
+                        {props.launchpadsArray.length > 0 &&
+                            props.launchpadsArray.map((launchpadItem) => {
+                                return <LaunchpadItem key={uuidv4()} launchpadData={launchpadItem}/>
+                            })
+                        }
+
                     </div>
 
                     {/*paginator*/}

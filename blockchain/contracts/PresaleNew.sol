@@ -575,4 +575,20 @@ contract PresaleNew is ReentrancyGuard {
     function getPresaleStatus () public view returns (uint256, uint256) {
         return (presale_info.presale_start, presale_info.presale_end);
     }
+
+    function getPresaleDetails() public view returns (
+        address,uint256, uint256,uint256, uint256,uint256, uint256,uint256, uint256
+    ) {
+        return (
+        presale_info.sale_token,
+        presale_info.token_rate,
+        presale_info.raise_min,
+        presale_info.raise_max,
+        presale_info.softcap,
+        presale_info.hardcap,
+        presale_info.presale_start,
+        presale_info.presale_end,
+        presaleStatus()
+        );
+    }
 }

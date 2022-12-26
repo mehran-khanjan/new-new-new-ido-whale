@@ -77,3 +77,18 @@ export const successSweetAlertOptions = ({text}) => {
         allowOutsideClick: false
     }
 }
+
+export const presaleStatus = (currentStatus) => {
+    switch (currentStatus) {
+        case "1":
+            return 'Active';
+        case "2":
+            return 'Success';
+        case "3":
+            return 'Failure';
+        case "4":
+            return 'Canceled';
+        default:
+            return 'Not Determined'
+    }
+}

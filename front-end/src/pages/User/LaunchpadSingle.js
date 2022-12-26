@@ -1,17 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import bigImage from '../../assets/img/games/1-1-big.png';
+import {useDispatch, useSelector} from "react-redux";
+import {getSingleLaunchpadBlockchain} from "../../store/LaunchpadThunk";
+import web3Store from "../../store/web3Store";
 
 const LaunchpadSingle = () => {
     const {launchpadContractAddress} = useParams();
+    const provider = web3Store(state => state.web3);
+    const dispatch = useDispatch();
+    const singleLaunchpad = useSelector(state => state.singleLaunchpadBlockchain.singleLaunchpad);
 
-    const lName = 'A';
+    useEffect(() => {
+        if (launchpadContractAddress) {
+            dispatch(getSingleLaunchpadBlockchain({provider, launchpadContractAddress}))
+        }
+    }, []);
+
+    if (!singleLaunchpad) {
+        return <div>Noting!</div>
+    }
 
     return (
         <React.Fragment>
             <Helmet>
-                <title>{`${lName} | IDO Whale`}</title>
+                <title>{`${singleLaunchpad.tokenName} | IDO Whale`}</title>
             </Helmet>
 
             {/*page head*/}
@@ -75,23 +89,22 @@ const LaunchpadSingle = () => {
                                 </div>
 
                                 <div className="play__text" style={{height: '100%'}}>
-                                    <p>
-                                        It is a long established fact that a reader will be distracted by the readable
-                                        content of a page when looking at its layout. The point of using Lorem Ipsum is
-                                        that it has a more-or-less normal distribution of letters, as opposed to using
-                                        'Content here, content here', making it look like readable English.
-                                    </p>
-                                    <p>
-                                        Many desktop publishing packages and web page editors now use Lorem Ipsum as
-                                        their default model text, and a search for 'lorem ipsum' will uncover many web
-                                        sites still in their infancy. Various versions have evolved over the years,
-                                        sometimes by accident, sometimes on purpose (injected humour and the like).
-                                    </p>
-                                    <p>
-                                        There are many variations of passages of Lorem Ipsum available, but the majority
-                                        have suffered alteration in some form, by injected humour, or randomised words
-                                        which don't look even slightly believable.
-                                    </p>
+
+                                    <p>{singleLaunchpad.tokenName}</p>
+                                    <p>{singleLaunchpad.launchpadContractAddress}</p>
+                                    <p>{singleLaunchpad.tokenContractAddress}</p>
+                                    <p>{singleLaunchpad.tokenName}</p>
+                                    <p>{singleLaunchpad.tokenSymbol}</p>
+                                    <p>{singleLaunchpad.tokenDecimals}</p>
+                                    <p>{singleLaunchpad.minContribution}</p>
+                                    <p>{singleLaunchpad.maxContribution}</p>
+                                    <p>{singleLaunchpad.tokenPrice}</p>
+                                    <p>{singleLaunchpad.softCap}</p>
+                                    <p>{singleLaunchpad.hardCap}</p>
+                                    <p>{singleLaunchpad.startTime}</p>
+                                    <p>{singleLaunchpad.stopTime}</p>
+                                    <p>{singleLaunchpad.presaleStatus}</p>
+
                                 </div>
                             </div>
                             {/*end play*/}

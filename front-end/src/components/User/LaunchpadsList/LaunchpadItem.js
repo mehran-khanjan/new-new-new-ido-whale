@@ -1,8 +1,9 @@
 import React from 'react';
 import blockchainLogo from '../../../assets/img/blockchain/1.png';
 import {Link} from "react-router-dom";
+import {presaleStatus} from "../../../utils/helpers";
 
-const LaunchpadItem = () => {
+const LaunchpadItem = (props) => {
     return (
         <React.Fragment>
             {/*game*/}
@@ -15,7 +16,7 @@ const LaunchpadItem = () => {
 
                         <div className="game__title">
                             <h3 className="game__name">
-                                <Link to={`/launchpads/1`}>Tank Metaverse</Link>
+                                <Link to={`/launchpads/${props.launchpadData.launchpadContractAddress}`}>{props.launchpadData.tokenName}</Link>
                             </h3>
                             <span className="game__blockchain">
 									Blockchain
@@ -24,25 +25,34 @@ const LaunchpadItem = () => {
                         </div>
                     </div>
 
-                    <p className="game__description">If you are going to use a passage of Lorem Ipsum, you
-                        need to be sure there isn't anything embarrassing hidden in the middle of text.</p>
+                    <p className="game__description">
+                        If you are going to use a passage of Lorem Ipsum, you
+                        need to be sure there isn't anything embarrassing hidden in the middle of text.
+                    </p>
 
                     <ul className="game__list">
                         <li>
-                            Devices <span>Web, Android, IOS</span>
+                            Price <span style={{color: '#aa72ce'}}>1 BNB = {props.launchpadData.tokenPrice} Token</span>
                         </li>
                         <li>
-                            Free to play <span className="required">NFT Required</span>
+                            Soft Cap <span>{props.launchpadData.softCap} BNB</span>
                         </li>
                         <li>
-                            Play to earn <span className="required">Crypto</span>
+                            Hard Cap <span>{props.launchpadData.hardCap} BNB</span>
                         </li>
                         <li>
-                            Status <span className="process">Presale</span>
+                            Start Time <span className="required">{`${new Date(+props.launchpadData.startTime)}`}</span>
+
+                        </li>
+                        <li>
+                            End Time <span className="required">{`${new Date(+props.launchpadData.stopTime)}`}</span>
+                        </li>
+                        <li>
+                            Status <span className="process">{presaleStatus(props.launchpadData.presaleStatus)}</span>
                         </li>
                     </ul>
 
-                    <Link to={`/launchpads/1`} className="game__more">
+                    <Link to={`/launchpads/${props.launchpadData.launchpadContractAddress}`} className="game__more">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path
                                 d="M17.92,11.62a1,1,0,0,0-.21-.33l-5-5a1,1,0,0,0-1.42,1.42L14.59,11H7a1,1,0,0,0,0,2h7.59l-3.3,3.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l5-5a1,1,0,0,0,.21-.33A1,1,0,0,0,17.92,11.62Z"/>

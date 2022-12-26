@@ -4,12 +4,13 @@ import {
     buyLaunchpadActions, checkTokenContractValidityActions,
     createLaunchpadActions, createLaunchpadBlockchainActions,
     getAllLaunchpadsActions,
-    getSingleLaunchpadActions,
+    getSingleLaunchpadActions, launchpadsListBlockchainActions, singleLaunchpadBlockchainActions,
     updateLaunchpadDetailedActions
 } from "./ReduxStore";
 import {getter, setter} from "../utils/blockchainSetter";
 import presaleFactoryContractABI from "../blockchain/PresaleFactoryNew.json";
 import presaleContractABI from '../blockchain/PresaleNew.json';
+import tokenContractABI from '../blockchain/ZigbitToken.json';
 import {ethers} from "ethers";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content';
@@ -17,6 +18,148 @@ import {loadingSweetAlertOptions} from "../utils/helpers";
 import {errorSweetAlertOptions, successSweetAlertOptions} from "../utils/helpers";
 
 const mySweetAlert = withReactContent(Swal);
+
+export const getSingleLaunchpadBlockchain = ({provider, launchpadContractAddress}) => {
+    return async (dispatch) => {
+        try {
+            const singleLaunchpadContract = await getter(
+                launchpadContractAddress,
+                presaleContractABI.abi,
+                provider,
+                'getPresaleDetails',
+                []
+            );
+            // console.log('presale data is: ', singleLaunchpadContract);
+
+            // console.log('token contract address', singleLaunchpadContract[0].toString());
+            // console.log('token price', singleLaunchpadContract[1].toString());
+            // console.log('min contribution', ethers.utils.formatUnits(singleLaunchpadContract[2]));
+            // console.log('max contribution', ethers.utils.formatUnits(singleLaunchpadContract[3]));
+            // console.log('soft cap', ethers.utils.formatUnits(singleLaunchpadContract[4]));
+            // console.log('hard cap', ethers.utils.formatUnits(singleLaunchpadContract[5]));
+            // console.log('start time', singleLaunchpadContract[6].toString());
+            // console.log('stop time', singleLaunchpadContract[7].toString());
+            // console.log('pre sale status', singleLaunchpadContract[8].toString());
+
+            const tokenName = await getter(
+                singleLaunchpadContract[0].toString(),
+                tokenContractABI.abi,
+                provider,
+                'name',
+                []
+            );
+
+            const tokenSymbol = await getter(
+                singleLaunchpadContract[0].toString(),
+                tokenContractABI.abi,
+                provider,
+                'symbol',
+                []
+            );
+
+            const tokenDecimals = await getter(
+                singleLaunchpadContract[0].toString(),
+                tokenContractABI.abi,
+                provider,
+                'decimals',
+                []
+            );
+
+            const singleLaunchpad = {
+                launchpadContractAddress: launchpadContractAddress,
+                tokenContractAddress: singleLaunchpadContract[0].toString(),
+                tokenName: tokenName,
+                tokenSymbol: tokenSymbol,
+                tokenDecimals: tokenDecimals,
+                minContribution: ethers.utils.formatUnits(singleLaunchpadContract[2]),
+                maxContribution: ethers.utils.formatUnits(singleLaunchpadContract[3]),
+                tokenPrice: singleLaunchpadContract[1].toString(),
+                softCap: ethers.utils.formatUnits(singleLaunchpadContract[4]),
+                hardCap: ethers.utils.formatUnits(singleLaunchpadContract[5]),
+                startTime: singleLaunchpadContract[6].toString(),
+                stopTime: singleLaunchpadContract[7].toString(),
+                presaleStatus: singleLaunchpadContract[8].toString()
+            }
+
+            dispatch(singleLaunchpadBlockchainActions.setLaunchpad(singleLaunchpad));
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
+
+export const getAllLaunchpadsBlockchain = ({provider}) => {
+    return async (dispatch) => {
+        try {
+            const launchpadsCount = await getter(
+                process.env.REACT_APP_CONTRACT_ADDRESS,
+                presaleFactoryContractABI.abi,
+                provider,
+                'getLastLaunchpad',
+                []
+            );
+
+            console.log('launchpads count: ', launchpadsCount.toString());
+
+            let launchpadsListArray = [];
+            for (let i = 1; i <= parseInt(launchpadsCount.toString()); i++) {
+                const launchpadContractAddress = await getter(
+                    process.env.REACT_APP_CONTRACT_ADDRESS,
+                    presaleFactoryContractABI.abi,
+                    provider,
+                    'launchpads',
+                    [`${i}`]
+                );
+                console.log(`launchpads list ${i}: `, launchpadContractAddress);
+
+                const singleLaunchpadContract = await getter(
+                    launchpadContractAddress,
+                    presaleContractABI.abi,
+                    provider,
+                    'getPresaleDetails',
+                    []
+                );
+                // console.log('presale data is: ', singleLaunchpadContract);
+
+                // console.log('token contract address', singleLaunchpadContract[0].toString());
+                // console.log('token price', singleLaunchpadContract[1].toString());
+                // console.log('min contribution', ethers.utils.formatUnits(singleLaunchpadContract[2]));
+                // console.log('max contribution', ethers.utils.formatUnits(singleLaunchpadContract[3]));
+                // console.log('soft cap', ethers.utils.formatUnits(singleLaunchpadContract[4]));
+                // console.log('hard cap', ethers.utils.formatUnits(singleLaunchpadContract[5]));
+                // console.log('start time', singleLaunchpadContract[6].toString());
+                // console.log('stop time', singleLaunchpadContract[7].toString());
+                // console.log('pre sale status', singleLaunchpadContract[8].toString());
+
+                const tokenName = await getter(
+                    singleLaunchpadContract[0].toString(),
+                    tokenContractABI.abi,
+                    provider,
+                    'name',
+                    []
+                );
+                // console.log('token name is: ', tokenName);
+
+                launchpadsListArray.push({
+                    launchpadContractAddress: launchpadContractAddress,
+                    tokenName: tokenName,
+                    tokenPrice: singleLaunchpadContract[1].toString(),
+                    softCap: ethers.utils.formatUnits(singleLaunchpadContract[4]),
+                    hardCap: ethers.utils.formatUnits(singleLaunchpadContract[5]),
+                    startTime: singleLaunchpadContract[6].toString(),
+                    stopTime: singleLaunchpadContract[7].toString(),
+                    presaleStatus: singleLaunchpadContract[8].toString()
+                });
+            }
+
+            dispatch(launchpadsListBlockchainActions.setLaunchpads(launchpadsListArray));
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
 
 export const createLaunchpadBlockchain = (
     {

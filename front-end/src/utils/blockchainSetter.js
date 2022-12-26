@@ -7,9 +7,9 @@ export const getter = async (contractAddress, abi, provider, method, args) => {
         // const contract = await provider.contract().at(contractAddress);
         const contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
         try {
-            console.log('blockchain args are: ', ...args);
+            // console.log('blockchain args are: ', ...args);
             const data = await contract[method](...args);
-            console.log('blockchain data is: ', data);
+            // console.log('blockchain data is: ', data);
 
             return data;
         } catch (e) {

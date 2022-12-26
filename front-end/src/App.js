@@ -26,13 +26,13 @@ function App() {
                 {/*User routes*/}
                 <Route path="/" element={<Header/>}>
                     <Route index element={<Home/>}/>
-                    <Route path="/launchpads/list" element={<LaunchpadsList/>}/>
-                    <Route path="/launchpads/:launchpadContractAddress" element={<LaunchpadSingle/>}/>
                     <Route path="/about" element={<Home/>}/>
                     <Route path="/contact" element={<Home/>}/>
                     <Route path="/connect-wallet" element={<ConnectWallet/>}/>
                 </Route>
                 <Route element={<React.Fragment><RouteGuard/></React.Fragment>}>
+                    <Route path="/launchpads/list" element={<LaunchpadsList/>}/>
+                    <Route path="/launchpads/:launchpadContractAddress" element={<LaunchpadSingle/>}/>
                     <Route path="/launchpads/create" element={<Create/>}/>
                     <Route path="/profile" element={<Profile/>}/>
                 </Route>
