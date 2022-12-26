@@ -46,11 +46,33 @@ const notificationSlice = createSlice({
             state.isVisible = false;
         }
     }
-})
+});
+
+const createLaunchpadBlockchainSlice = createSlice({
+    name: 'createLaunchpadBlockchain',
+    initialState: {launchpadContractAddress: null},
+    reducers: {
+        setLaunchpad(state, action) {
+            state.launchpadContractAddress = action.payload;
+        }
+    }
+});
+
+const checkTokenContractValiditySlice = createSlice({
+    name: 'checkTokenContractValidity',
+    initialState: {isTokenValid: false, totalSupply: null, contractAddress: null},
+    reducers: {
+        setValid(state, action) {
+            state.isTokenValid = true;
+            state.totalSupply = action.payload.totalSupply;
+            state.contractAddress = action.payload.contractAddress;
+        }
+    }
+});
 
 const createLaunchpadSlice = createSlice({
     name: 'createLaunchpad',
-    initialState: {isTokenValid: false, totalSupply: null, isValid: false, networkId: null, contractAddress: null},
+    initialState: {isValid: false, networkId: null, contractAddress: null},
     reducers: {
         setValid(state, action) {
             state.isValid = true;
@@ -61,11 +83,6 @@ const createLaunchpadSlice = createSlice({
             state.isValid = false;
             state.networkId = null;
             state.contractAddress = null;
-        },
-        setTokenValidity(state, action) {
-            state.isTokenValid = true;
-            state.totalSupply = action.payload.totalSupply;
-            state.contractAddress = action.payload.contractAddress;
         }
     }
 });
@@ -121,7 +138,9 @@ const ReduxStore = configureStore({
         updateLaunchpadDetails: updateLaunchpadDetailsSlice.reducer,
         getAllLaunchpads: getAllLaunchpadsSlice.reducer,
         getSingleLaunchpad: getSingleLaunchpadSlice.reducer,
-        buyLaunchpad: buyLaunchpadSlice.reducer
+        buyLaunchpad: buyLaunchpadSlice.reducer,
+        checkTokenContractValidity: checkTokenContractValiditySlice.reducer,
+        createLaunchpadBlockchain: createLaunchpadBlockchainSlice.reducer
     }
 });
 
@@ -132,5 +151,7 @@ export const updateLaunchpadDetailedActions = updateLaunchpadDetailsSlice.action
 export const getAllLaunchpadsActions = getAllLaunchpadsSlice.actions;
 export const getSingleLaunchpadActions = getSingleLaunchpadSlice.actions;
 export const buyLaunchpadActions = buyLaunchpadSlice.actions;
+export const checkTokenContractValidityActions = checkTokenContractValiditySlice.actions;
+export const createLaunchpadBlockchainActions = createLaunchpadBlockchainSlice.actions;
 
 export default ReduxStore;

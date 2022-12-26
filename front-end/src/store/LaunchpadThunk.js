@@ -1,8 +1,8 @@
 import axios from 'axios';
 import {getJWT, isUserLogin} from "../utils/localStorageActions";
 import {
-    buyLaunchpadActions,
-    createLaunchpadActions,
+    buyLaunchpadActions, checkTokenContractValidityActions,
+    createLaunchpadActions, createLaunchpadBlockchainActions,
     getAllLaunchpadsActions,
     getSingleLaunchpadActions,
     updateLaunchpadDetailedActions
@@ -17,6 +17,71 @@ import {loadingSweetAlertOptions} from "../utils/helpers";
 import {errorSweetAlertOptions, successSweetAlertOptions} from "../utils/helpers";
 
 const mySweetAlert = withReactContent(Swal);
+
+export const createLaunchpadBlockchain = (
+    {
+        provider,
+        tokenContractAddress,
+        networkId,
+        presaleRate,
+        softCap,
+        hardCap,
+        minBuy,
+        maxBuy,
+        startDate,
+        stopDate
+    }
+) => {
+    return async (dispatch) => {
+        mySweetAlert.fire(loadingSweetAlertOptions);
+
+        try {
+            const {receipt, issuedEvents} = await setter(
+                process.env.REACT_APP_CONTRACT_ADDRESS,
+                presaleFactoryContractABI.abi,
+                provider,
+                'create',
+                /*
+                address _sale_token,
+                uint256 _token_rate,
+                uint256 _raise_min,
+                uint256 _raise_max,
+                uint256 _softCap,
+                uint256 _hardCap,
+                bool _whitelist,
+                uint256 _presale_start,
+                uint256 _presale_end
+                */
+                // preRate is tokenCount. We should pass with decimals or without decimals?
+                [
+                    tokenContractAddress,
+                    +presaleRate,
+                    ethers.utils.parseEther(minBuy),
+                    ethers.utils.parseEther(maxBuy),
+                    ethers.utils.parseEther(softCap),
+                    ethers.utils.parseEther(hardCap),
+                    false, +startDate, +stopDate,
+                    {value: ethers.utils.parseEther('0.01')}],
+                'CreateEvent',
+                dispatch
+            );
+            const preSaleContractAddress = issuedEvents.tokenAddress;
+            console.log('new launchpad address is: ', preSaleContractAddress);
+            // new contract address: 0xd42a6DcD2BB740F9E46d980781B8EffC69Ec076d
+            // new contract address: 0x2e5A920f910F3905Db1c54Cb1d81a9993649fA55
+
+            const sweetAlertOptions = successSweetAlertOptions({text: 'The contract creation was done.'});
+            mySweetAlert.fire(sweetAlertOptions)
+                .then(() => {
+                    dispatch(createLaunchpadBlockchainActions.setLaunchpad(preSaleContractAddress));
+                });
+        } catch (e) {
+            // console.log(e);
+            const sweetAlertOptions = errorSweetAlertOptions({text: 'Error'});
+            mySweetAlert.fire(sweetAlertOptions);
+        }
+    }
+}
 
 export const checkTokenValidity = ({tokenContractAddress}) => {
     mySweetAlert.fire(loadingSweetAlertOptions);
@@ -34,18 +99,18 @@ export const checkTokenValidity = ({tokenContractAddress}) => {
                 }
             }
             const result = await axios(axiosOptions);
-            console.log('the BSC api result is: ', result.data);
+            // console.log('the BSC api result is: ', result.data);
 
             if (result.data.result === '0') {
-                console.log('The token contract address is invalid');
+                // console.log('The token contract address is invalid');
                 const sweetAlertOptions = errorSweetAlertOptions({text: 'The token contract address is invalid'});
                 mySweetAlert.fire(sweetAlertOptions);
             } else {
-                console.log('The token contract address is valid');
-                const sweetAlertOptions = successSweetAlertOptions({text: 'The token contract address is invalid'});
+                // console.log('The token contract address is valid');
+                const sweetAlertOptions = successSweetAlertOptions({text: 'The token contract address is valid'});
                 mySweetAlert.fire(sweetAlertOptions)
                     .then(() => {
-                        dispatch(createLaunchpadActions.setTokenValidity({
+                        dispatch(checkTokenContractValidityActions.setValid({
                             totalSupply: result.data.result,
                             contractAddress: tokenContractAddress
                         }));

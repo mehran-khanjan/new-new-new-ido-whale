@@ -2,7 +2,12 @@ import React, {useState} from 'react';
 import DateTimePicker from "react-datetime-picker";
 import useWeb3Store from "../../../store/web3Store";
 import {useDispatch, useSelector} from "react-redux";
-import {checkTokenValidity, createLaunchpad, updateLaunchpad} from "../../../store/LaunchpadThunk";
+import {
+    checkTokenValidity,
+    createLaunchpad,
+    createLaunchpadBlockchain,
+    updateLaunchpad
+} from "../../../store/LaunchpadThunk";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content';
 import {loadingSweetAlertOptions} from "../../../utils/helpers";
@@ -38,7 +43,12 @@ const CreateLaunchpadStepOne = (props) => {
     const handleFormSubmission = async (e) => {
         e.preventDefault();
 
-        dispatch(checkTokenValidity({tokenContractAddress}));
+        dispatch(createLaunchpadBlockchain({
+            provider, tokenContractAddress: props.tokenContractAddress,
+            networkId, presaleRate, softCap, hardCap, minBuy, maxBuy,
+            startDate: Math.floor(start.getTime() / 1000),
+            stopDate: Math.floor(stop.getTime() / 1000),
+        }));
 
         // if (!isUpdated) {
         // add some codes
@@ -49,15 +59,13 @@ const CreateLaunchpadStepOne = (props) => {
 
     }
 
-    const onNextButtonClickHandle = () => {
-
-    }
+    // const onNextButtonClickHandle = () => {
+    //
+    // }
 
     const onPrevButtonClickHandle = () => {
         props.onPrevStep();
     }
-
-    console.log('token ccc',props.tokenContractAddress);
 
     if (!props.tokenContractAddress) {
         return <div>Loading...</div>;
@@ -167,8 +175,7 @@ const CreateLaunchpadStepOne = (props) => {
                                     <div className="col-12 col-md-6">
                                         <div className="form-group">
                                             <button type="submit" className="form__btn form__btn--small"
-                                                    style={{width: '100%'}}
-                                                    onClick={onNextButtonClickHandle}>
+                                                    style={{width: '100%'}}>
                                                 Next
                                             </button>
                                         </div>

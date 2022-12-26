@@ -6,6 +6,9 @@ import './App.css';
 import Home from "./pages/User/Home";
 import Create from "./pages/User/Create";
 import ConnectWallet from "./pages/Shared/ConnectWallet";
+import LaunchpadsList from "./pages/User/LaunchpadsList";
+import LaunchpadSingle from "./pages/User/LaunchpadSingle";
+import Profile from "./pages/User/Profile";
 import NoPage from "./pages/Shared/NoPage";
 import Header from "./components/User/Shared/Header";
 import RouteGuard from "./components/User/Shared/RouteGaurd";
@@ -23,14 +26,15 @@ function App() {
                 {/*User routes*/}
                 <Route path="/" element={<Header/>}>
                     <Route index element={<Home/>}/>
-                    <Route path="/launchpads/list" element={<Home/>}/>
+                    <Route path="/launchpads/list" element={<LaunchpadsList/>}/>
+                    <Route path="/launchpads/:launchpadContractAddress" element={<LaunchpadSingle/>}/>
                     <Route path="/about" element={<Home/>}/>
                     <Route path="/contact" element={<Home/>}/>
                     <Route path="/connect-wallet" element={<ConnectWallet/>}/>
                 </Route>
                 <Route element={<React.Fragment><RouteGuard/></React.Fragment>}>
                     <Route path="/launchpads/create" element={<Create/>}/>
-                    <Route path="/profile" element={<Create/>}/>
+                    <Route path="/profile" element={<Profile/>}/>
                 </Route>
 
                 {/*Admin routes*/}

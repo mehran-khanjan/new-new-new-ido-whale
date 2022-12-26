@@ -8,14 +8,23 @@ import {useSelector} from "react-redux";
 
 const Create = () => {
     const [step, setStep] = useState(1);
-    const isTokenValid = useSelector(state => state.createLaunchpad.isTokenValid);
-    const contractAddress = useSelector(state => state.createLaunchpad.contractAddress);
+    const isTokenValid = useSelector(state => state.checkTokenContractValidity.isTokenValid);
+    const contractAddress = useSelector(state => state.checkTokenContractValidity.contractAddress);
+    const preSaleContractAddress = useSelector(state => state.createLaunchpadBlockchain.launchpadContractAddress);
 
+    // Go to the step 2
     useEffect(() => {
         if (isTokenValid) {
             onNextStepHandle();
         }
-    }, [isTokenValid])
+    }, [isTokenValid]);
+
+    // Go to the step 3
+    useEffect(() => {
+        if (preSaleContractAddress) {
+            onNextStepHandle();
+        }
+    }, [preSaleContractAddress]);
 
     const onNextStepHandle = () => {
         setStep(prevState => prevState + 1);
