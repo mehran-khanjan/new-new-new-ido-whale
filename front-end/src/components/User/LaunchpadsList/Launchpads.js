@@ -101,6 +101,8 @@ const Launchpads = (props) => {
                 <div className="container">
                     <div className="row row--grid">
 
+                        {/*{ !props.launchpadsArray ? <div>Loading</div> : null }*/}
+
                         {props.launchpadsArray.length === 0
                             && <div>No launchpad exist</div>
                         }

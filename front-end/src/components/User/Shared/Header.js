@@ -75,6 +75,11 @@ const Header = () => {
                                             <li><NavLink to="/contact">Contact</NavLink></li>
                                         </ul>
                                     </li>
+                                    <li>
+                                        <NavLink to="/launchpads/0x8D13D9b43F07BF112738baEFdDE123a212b20572">
+                                            A launchpad
+                                        </NavLink>
+                                    </li>
                                 </ul>
                                 {/*end navigation*/}
 

@@ -19,6 +19,40 @@ import {errorSweetAlertOptions, successSweetAlertOptions} from "../utils/helpers
 
 const mySweetAlert = withReactContent(Swal);
 
+export const launchpadParticipateBlockchain = ({provider, launchpadContractAddress, participantAmount}) => {
+    return async (dispatch) => {
+        mySweetAlert.fire(loadingSweetAlertOptions);
+
+        console.log('bmb amount: ', ethers.utils.parseEther(participantAmount))
+
+        try {
+            const {receipt, issuedEvents} = await setter(
+                launchpadContractAddress,
+                presaleContractABI.abi,
+                provider,
+                'userDeposit',
+                [
+                    {value: ethers.utils.parseEther(participantAmount)}],
+                'UserDepsitedSuccess',
+                dispatch
+            );
+            const buyerAddress = issuedEvents.buyerAddress;
+            const buyValue = issuedEvents.buyValue;
+
+            console.log('buyer address is: ', buyerAddress);
+            console.log('buyer address is: ', buyValue);
+
+            const sweetAlertOptions = successSweetAlertOptions({text: 'You deposited correctly.'});
+            mySweetAlert.fire(sweetAlertOptions);
+
+        } catch (e) {
+            // console.log(e);
+            const sweetAlertOptions = errorSweetAlertOptions({text: 'Error'});
+            mySweetAlert.fire(sweetAlertOptions);
+        }
+    }
+}
+
 export const getSingleLaunchpadBlockchain = ({provider, launchpadContractAddress}) => {
     return async (dispatch) => {
         try {

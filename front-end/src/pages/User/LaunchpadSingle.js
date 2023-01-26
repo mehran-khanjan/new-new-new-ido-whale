@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import bigImage from '../../assets/img/games/1-1-big.png';
 import {useDispatch, useSelector} from "react-redux";
-import {getSingleLaunchpadBlockchain} from "../../store/LaunchpadThunk";
+import {getSingleLaunchpadBlockchain, launchpadParticipateBlockchain} from "../../store/LaunchpadThunk";
 import web3Store from "../../store/web3Store";
 
 const LaunchpadSingle = () => {
@@ -11,12 +11,21 @@ const LaunchpadSingle = () => {
     const provider = web3Store(state => state.web3);
     const dispatch = useDispatch();
     const singleLaunchpad = useSelector(state => state.singleLaunchpadBlockchain.singleLaunchpad);
+    const [participantAmount, setParticipantAmount] = useState();
 
     useEffect(() => {
         if (launchpadContractAddress) {
             dispatch(getSingleLaunchpadBlockchain({provider, launchpadContractAddress}))
         }
     }, []);
+
+    const onFormSubmitHandle = (e) => {
+        e.preventDefault();
+
+        dispatch(launchpadParticipateBlockchain({
+            provider, launchpadContractAddress, participantAmount
+        }))
+    }
 
     if (!singleLaunchpad) {
         return <div>Noting!</div>
@@ -37,8 +46,10 @@ const LaunchpadSingle = () => {
                             <div className="col-12">
                                 <ul className="breadcrumb">
                                     <li className="breadcrumb__item"><a href="index.html">Home</a></li>
-                                    <li className="breadcrumb__item"><a href="aggregator.html">Games</a></li>
-                                    <li className="breadcrumb__item breadcrumb__item--active">Realms Of Ethernity</li>
+                                    <li className="breadcrumb__item"><a href="aggregator.html">Projects</a></li>
+                                    <li className="breadcrumb__item breadcrumb__item--active">
+                                        {singleLaunchpad.tokenName}
+                                    </li>
                                 </ul>
                             </div>
                             {/*end breadcrumb*/}
@@ -46,7 +57,9 @@ const LaunchpadSingle = () => {
                             {/*section title*/}
                             <div className="col-12">
                                 <div className="section__title section__title--left section__title--page">
-                                    <h1>Realms Of Ethernity</h1>
+                                    <h1>
+                                        {singleLaunchpad.tokenName}
+                                    </h1>
                                 </div>
                             </div>
                             {/*end section title*/}
@@ -101,6 +114,10 @@ const LaunchpadSingle = () => {
                                     <p>{singleLaunchpad.tokenPrice}</p>
                                     <p>{singleLaunchpad.softCap}</p>
                                     <p>{singleLaunchpad.hardCap}</p>
+
+                                    <p>start time: {`${new Date(+singleLaunchpad.startTime * 1000)}`}</p>
+                                    <p>start time: {`${new Date(+singleLaunchpad.stopTime * 1000)}`}</p>
+
                                     <p>{singleLaunchpad.startTime}</p>
                                     <p>{singleLaunchpad.stopTime}</p>
                                     <p>{singleLaunchpad.presaleStatus}</p>
@@ -122,14 +139,16 @@ const LaunchpadSingle = () => {
                                     {/*<label htmlFor="tokenContractAddress" className="form__label">*/}
                                     {/*    Amount (BNB)*/}
                                     {/*</label>*/}
-                                    <input id="tokenContractAddress" type="text" name="tokenContractAddress"
-                                           className="form__input"/>
-                                    {/*onChange={e => setTokenContractAddress(e.target.value)}/>*/}
-                                    {/*onBlur={}/>*/}
-                                    <button type="submit" className="form__btn form__btn--small"
-                                            style={{width: '100%'}}>
-                                        Buy
-                                    </button>
+                                    <form onSubmit={onFormSubmitHandle}>
+                                        <input id="tokenContractAddress" type="text" name="tokenContractAddress"
+                                               className="form__input"
+                                               onChange={e => setParticipantAmount(e.target.value)}/>
+                                        {/*onBlur={}/>*/}
+                                        <button type="submit" className="form__btn form__btn--small"
+                                                style={{width: '100%'}}>
+                                            Buy
+                                        </button>
+                                    </form>
                                     {/*</div>*/}
                                     {/*</div>*/}
                                 </div>
@@ -242,6 +261,7 @@ const LaunchpadSingle = () => {
                             </div>
                             {/*end description*/}
                         </div>
+
                     </div>
                 </div>
             </div>

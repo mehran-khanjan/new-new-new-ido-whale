@@ -41,11 +41,11 @@ const LaunchpadItem = (props) => {
                             Hard Cap <span>{props.launchpadData.hardCap} BNB</span>
                         </li>
                         <li>
-                            Start Time <span className="required">{`${new Date(+props.launchpadData.startTime)}`}</span>
+                            Start Time <span className="required">{`${new Date(+props.launchpadData.startTime * 1000)}`}</span>
 
                         </li>
                         <li>
-                            End Time <span className="required">{`${new Date(+props.launchpadData.stopTime)}`}</span>
+                            End Time <span className="required">{`${new Date(+props.launchpadData.stopTime * 1000)}`}</span>
                         </li>
                         <li>
                             Status <span className="process">{presaleStatus(props.launchpadData.presaleStatus)}</span>
